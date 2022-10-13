@@ -15,59 +15,23 @@
 
 <body class="h-full grid place-items-center">
     <div id="app">
-        <section v-show="inprogressAssignments.length">
-            <h2 class="font-bold mb-2">In Progress Assignments</h2>
-            <ul>
-                <li 
-                    v-for="assignment in inprogressAssignments" 
-                    :key="assignment.id"
-                > 
-                    <label for="">{{ assignment.name }}</label>
-                    <input type="checkbox" v-model="assignment.complete">
-                </li>
-            </ul>
-        </section>
-        
-        <section v-show="completedAssignments.length" class="mt-8">
-            <h2 class="font-bold mb-2">Completed Assignments</h2>
-            <ul>
-                <li 
-                    v-for="assignment in completedAssignments" 
-                    :key="assignment.id"
-                > 
-                    <label for="">{{ assignment.name }}</label>
-                    <input type="checkbox" v-model="assignment.complete">
-                </li>
-            </ul>
-        </section>
-
-        <hr>
-        <pre>
-            {{ assignments }}
-        </pre>
+        <app-button>Submit</app-button>
     </div>
     
     <script>
         let app = {
-            data() {
-                return {
-                    assignments: [
-                        {id:'1', name:'Finish Task', complete: false},
-                        {id:'2', name:'Read chapter 4 of history of the church', complete: false},
-                        {id:'3', name:'Turn in homework', complete: false}
-                    ]
+            components: {
+                'app-button' : {
+                    template: `<button class="bg-gray-200 hover:bg-gray-400 border rounded px-5 py-2 disabled:cursor-not-allowed" :disabled="processing">
+                       <slot/>
+                    </button>`,
+
+                    data(){
+                        return {
+                            processing: true,
+                        }
+                    }
                 }
-            },
-            computed: {
-                completedAssignments(){
-                    return this.assignments.filter(assignment => assignment.complete)
-                },
-                inprogressAssignments(){
-                    return this.assignments.filter(assignment => !assignment.complete)
-                }
-            },
-            methods: {
-               
             }
         };
 

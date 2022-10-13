@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lists, Conditionals, and Computed Properties</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        
+    </style>
+</head>
+
+<body class="h-full grid place-items-center">
+    <div id="app">
+        <section v-show="inprogressAssignments.length">
+            <h2 class="font-bold mb-2">In Progress Assignments</h2>
+            <ul>
+                <li 
+                    v-for="assignment in inprogressAssignments" 
+                    :key="assignment.id"
+                > 
+                    <label for="">{{ assignment.name }}</label>
+                    <input type="checkbox" v-model="assignment.complete">
+                </li>
+            </ul>
+        </section>
+        
+        <section v-show="completedAssignments.length" class="mt-8">
+            <h2 class="font-bold mb-2">Completed Assignments</h2>
+            <ul>
+                <li 
+                    v-for="assignment in completedAssignments" 
+                    :key="assignment.id"
+                > 
+                    <label for="">{{ assignment.name }}</label>
+                    <input type="checkbox" v-model="assignment.complete">
+                </li>
+            </ul>
+        </section>
+
+        <hr>
+        <pre>
+            {{ assignments }}
+        </pre>
+    </div>
+    
+    <script>
+        let app = {
+            data() {
+                return {
+                    assignments: [
+                        {id:'1', name:'Finish Task', complete: false},
+                        {id:'2', name:'Read chapter 4 of history of the church', complete: false},
+                        {id:'3', name:'Turn in homework', complete: false}
+                    ]
+                }
+            },
+            computed: {
+                completedAssignments(){
+                    return this.assignments.filter(assignment => assignment.complete)
+                },
+                inprogressAssignments(){
+                    return this.assignments.filter(assignment => !assignment.complete)
+                }
+            },
+            methods: {
+               
+            }
+        };
+
+        Vue.createApp(app).mount('#app');
+    </script>
+</body>
+</html>
