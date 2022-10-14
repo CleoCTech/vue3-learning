@@ -30,3 +30,15 @@ Since we can have these many components, in the next episode we are going to ext
 #Episode 06: Component Props
 -Props are like parameters we pass when we create new instance of any component/class.
 -Which means, you have to pass these parameters when creating it's instance, but if we don't want to pass parameters, we can give default values incase someone does not pass. 
+
+#Episode 07: Bring it All Together
+-We went back to our backup.html file, and we want to implement component structure as we learned from last class. We bring the code to main index.html and delete the backupfile.html
+
+We you want to separate an html element to a component, thing of what is the importance of doing so. In most cases you want to make it as component because of reusability, but if you're not going to reuse it, no need to refractor it.
+Key things: 
+    -Note that inside assignments component, we import AssignmentList and we pass the props/parameters and is must since we didn't provide the defaults incase one doesn't pass.
+    -Note when we create an instance of the component, inside template, we have given it props/parameters: `:assignments="filters.inProgress" title="In Progress"` .
+    For the `title` prop/parameter, we passed in a string without using `:` or `v-bind` you can call it. Therefore it will pass it as a string. 
+    But if we do the same in 'assignments' prop/parameter, we will be passing just a string and the component require array of the assignments. That's why we had to use `:` to bind the data from source of truth instead of a string. 
+
+
