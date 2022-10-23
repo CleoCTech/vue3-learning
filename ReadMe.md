@@ -58,3 +58,8 @@ Therefore we can prevent this behavior at higher level since the submit has this
         }
     } `
 
+#Episode 09: Parent-Child State Communication
+-We have separated create concern, therfore assignment-create component. 
+-The compent has to do it's work, create new assignement and then communicates back to the parent component "Here is the new item i have created, do what you want to do with it, otherwise I'm done".
+-You will find out in most cases that when it comes to parent-child component communication, is that the parent will communicate to child by passing down the `props`.  The child on the hand will communicate back to the parent by `emiting` an event.
+-Now in our main/parent component `Assignments`, it will listen to `add` event which was emitted by child component `AssignmentCreate`, and the calls it's own method `add(title)` which receives the parameter and it takes care of pushing it to the assignments array. 
