@@ -1,6 +1,6 @@
 export default {
     template: `
-    <li 
+    <li class="p-2 flex justify-between "
         
     > 
         <label for="">{{ assignment.name }}</label>

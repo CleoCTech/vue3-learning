@@ -41,4 +41,20 @@ Key things:
     For the `title` prop/parameter, we passed in a string without using `:` or `v-bind` you can call it. Therefore it will pass it as a string. 
     But if we do the same in 'assignments' prop/parameter, we will be passing just a string and the component require array of the assignments. That's why we had to use `:` to bind the data from source of truth instead of a string. 
 
+#Episode 08: Handle a Form Submission
+-When submitting the form, the default action makes the browser to reload, and we want to prevent that default action.
+-In our form that we created, we passed add method to submit event. In our method `add(e)`, we pass the event and we use that event to command the behavior we want i.e `e.preventDefault()` behavior. This tells us that the default behavior of submit event is page reload. 
+Therefore we can prevent this behavior at higher level since the submit has this behavior. 
+-Instead of passing the event to our function `add(e)`, we do this: 
+`<form @submit.prevent="add">` 
+    `<button type="submit" class="bg-white p-2 border-l">Add</button>`
+`</form>`
+ instead of ...
+ `<form @submit="add">`
+ `methods: {
+        add(e){
+            e.preventDefault();
+            alert("hi there!");
+        }
+    } `
 
