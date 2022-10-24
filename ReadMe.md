@@ -10,7 +10,7 @@ Key things:
          
 `v-on:click="callMethod"` => `@click="callMethod"`
 
-#Episode 03: Lists, Conditionals, and Computed Properties
+# Episode 03: Lists, Conditionals, and Computed Properties
 
 We used computet object of vue -which act as cache of data you want to render
 
