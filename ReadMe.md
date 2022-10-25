@@ -64,3 +64,13 @@ Therefore we can prevent this behavior at higher level since the submit has this
 -The compent has to do it's work, create new assignement and then communicates back to the parent component "Here is the new item i have created, do what you want to do with it, otherwise I'm done".
 -You will find out in most cases that when it comes to parent-child component communication, is that the parent will communicate to child by passing down the `props`.  The child on the hand will communicate back to the parent by `emiting` an event.
 -Now in our main/parent component `Assignments`, it will listen to `add` event which was emitted by child component `AssignmentCreate`, and the calls it's own method `add(title)` which receives the parameter and it takes care of pushing it to the assignments array. 
+
+# SECTION 4 Beyond the Basics
+
+# Episode 10: It's All So Easy
+- In this episode we don't have a direct objective. We just have to demonstrate how things get easy when you learn the basics. 
+- If you an set of array like this: `return new Set(this.assignments.map(a => a.tag));`, this will list each assignment tag. And we will have number of tags equal to the number of assignments if any. 
+- What if in this newList/Array of `tags[]`, you want to append new tag/item? 
+- You will simply map your new item to the list of tags. 
+    `return ['all', ...new Set(this.assignments.map(a => a.tag))];`
+- The 3 dots will append 'all' item to set that will be created on the right.    
