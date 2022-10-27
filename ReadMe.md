@@ -74,3 +74,22 @@ Therefore we can prevent this behavior at higher level since the submit has this
 - You will simply map your new item to the list of tags. 
     `return ['all', ...new Set(this.assignments.map(a => a.tag))];`
 - The 3 dots will append 'all' item to set that will be created on the right.    
+
+# Episode 11: Component Responsibility
+- In this section we will be refactoring our components. 
+- When refactoring, we usaully talk of responsibility or separation of concerns. Byt this we mean, when you're reviewing your components, you will always be thinking 🤔, ...should this component be responsible for that? 
+## Example:
+- Take an example of `AssignmentList component`, it's responsible for displaying a list of assignments.
+- The moment we introduced tags in the same component, we add so many things just to make the tags functionality work. Now the component which was responsible for listing assignments, is now having so many things and probably more to come.
+- Let's refractor the tag concern out. 
+## Refactoring
+- Start with the template by extractiin it out and create a new component of it's name. 
+- Check the extracted component , which data does it need?
+- We create `assignemenr-tags` component, and passed two $props to it `currentTag` & `initialTags`.
+- And then when we click on the tag, we emit change event together with the currentTag user selected:
+    ` @click="$emit('change', tag)"`
+    - and then listen this event in our parent component:
+    `@change="currentTag = $event"` 
+    -we will assign that event varuable we have received to the currentTag in our parent component. And becuase of reactivity, the currentTag will pass it's self to child component and change the color of selected tag: 
+    `:current-tag="currentTag"`.
+- For sure, this magical and pretty easy on how we can achiev dynamicity of data even on separation of concerns/compoments. They are able to communicate effectively and we also have clean code.
