@@ -93,3 +93,52 @@ Therefore we can prevent this behavior at higher level since the submit has this
     -we will assign that event varuable we have received to the currentTag in our parent component. And becuase of reactivity, the currentTag will pass it's self to child component and change the color of selected tag: 
     `:current-tag="currentTag"`.
 - For sure, this magical and pretty easy on how we can achiev dynamicity of data even on separation of concerns/compoments. They are able to communicate effectively and we also have clean code.
+
+# Episode 12: A Deeper Look at V-Model
+- We learned the basic of the V-Model. We know that we can apply it to a form input : `v-model="newAssignment"`, and then magically it keeps everything in sync. 
+- But, what exactly happens for it to behave as such? Let's have a look...
+    - First, it binds the value to the input field.
+    - Second, it listens for when the value changes. 
+- The long form of `v-model` is equivalent to this : `<input type="text" :value="newAssignment" @input="newAssignment = $event.target.value" >`
+image.png
+
+- Lets see how we can apply v-model knownledge somewhere else other than input element. 
+- In our assignment-list component, we have embedded assignment tags component, which needs `currentTag` as prop. 
+- Therefore, we pass our the prop `currentTag` to assignment-tag component. Since Assignement-List component is the owner/source of truth of this variable: `currentTag`, we need to also to listen when assignmet-tag component changes the value of `currentTag` so that we can update it instantly to anyone else who might need that value, hence `source of truth`. 
+### Comparison use case of v-model
+- We are basically passing/binding a value, and then, we also listening a kind of input event. 
+
+    `<assignment-tags 
+        :initial-tags="assignments.map(a => a.tag)"
+        :current-tag="currentTag"
+        @change="currentTag = $event"
+        >
+    </assignment-tags>`
+
+- From our long version(how v-model works under the hood) of `v-model` => `<input type="text" :value="newAssignment" @input="newAssignment = $event.target.value" >`, is the exact same as what we are doing when binding a value to the child component. 
+- We actually can use `v-model` here becuase it does the exact same thing we have explained above. 
+- From  the above code, we are listening for change event and then manually update it on the parent. We can leavetage `v-model` to do that(listen & update) for us behind the scene. 
+
+    `<assignment-tags 
+        v-model:currentTag="currentTag"
+        :initial-tags="assignments.map(a => a.tag)"
+        >
+    </assignment-tags>`
+
+- Note that, we are explicitly telling `v-model` to which modelValue value should listen/update. That's we are doing this `v-model:currentTag` . 
+- And then in our child component: assignment-tags, we can update the value of `currentTag` directly and it will be passed by `v-model`. 
+
+    `<button 
+        @click="$emit('update:currentTag', tag)"
+        v-for="tag in tags" 
+        class="border rounded px-1 py-px text-xs"
+        :class="{
+            'border-blue-500 text-blue-500': tag == currentTag
+        }"
+        >
+        {{ tag }}
+    </button>`
+- On click, update the prop currentTag and since there's a v-model binded with it, it will be magically updated.
+
+
+
