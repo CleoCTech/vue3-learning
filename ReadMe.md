@@ -46,18 +46,22 @@ Key things:
 -In our form that we created, we passed add method to submit event. In our method `add(e)`, we pass the event and we use that event to command the behavior we want i.e `e.preventDefault()` behavior. This tells us that the default behavior of submit event is page reload. 
 Therefore we can prevent this behavior at higher level since the submit has this behavior. 
 -Instead of passing the event to our function `add(e)`, we do this: 
-`<form @submit.prevent="add">` 
-    `<button type="submit" class="bg-white p-2 border-l">Add</button>`
-`</form>`
+    ```
+    <form @submit.prevent="add">
+        <button type="submit" class="bg-white p-2 border-l">Add</button>
+    </form>
+    ```
  instead of ...
- `<form @submit="add">`
- `methods: {
-        add(e){
-            e.preventDefault();
-            alert("hi there!");
-        }
-    } `
-
+    ```
+    <form @submit="add">
+    *********************************
+    methods: {
+            add(e){
+                e.preventDefault();
+                alert("hi there!");
+            }
+        } 
+    ``` 
 
 # Episode 09: Parent-Child State Communication
 -We have separated create concern, therfore assignment-create component. 
@@ -107,28 +111,31 @@ image.png
 - Therefore, we pass our the prop `currentTag` to assignment-tag component. Since Assignement-List component is the owner/source of truth of this variable: `currentTag`, we need to also to listen when assignmet-tag component changes the value of `currentTag` so that we can update it instantly to anyone else who might need that value, hence `source of truth`. 
 ### Comparison use case of v-model
 - We are basically passing/binding a value, and then, we also listening a kind of input event. 
-
-    `<assignment-tags 
+    ```
+    <assignment-tags 
         :initial-tags="assignments.map(a => a.tag)"
         :current-tag="currentTag"
         @change="currentTag = $event"
         >
-    </assignment-tags>`
+    </assignment-tags>
+
+    ```
 
 - From our long version(how v-model works under the hood) of `v-model` => `<input type="text" :value="newAssignment" @input="newAssignment = $event.target.value" >`, is the exact same as what we are doing when binding a value to the child component. 
 - We actually can use `v-model` here becuase it does the exact same thing we have explained above. 
 - From  the above code, we are listening for change event and then manually update it on the parent. We can leavetage `v-model` to do that(listen & update) for us behind the scene. 
-
-    `<assignment-tags 
+    ```
+    <assignment-tags 
         v-model:currentTag="currentTag"
         :initial-tags="assignments.map(a => a.tag)"
         >
-    </assignment-tags>`
+    </assignment-tags>
+    ```
 
 - Note that, we are explicitly telling `v-model` to which modelValue value should listen/update. That's we are doing this `v-model:currentTag` . 
 - And then in our child component: assignment-tags, we can update the value of `currentTag` directly and it will be passed by `v-model`. 
-
-    `<button 
+    ```
+    <button 
         @click="$emit('update:currentTag', tag)"
         v-for="tag in tags" 
         class="border rounded px-1 py-px text-xs"
@@ -137,8 +144,32 @@ image.png
         }"
         >
         {{ tag }}
-    </button>`
+    </button>
+
+    ```
 - On click, update the prop currentTag and since there's a v-model binded with it, it will be magically updated.
 
+# Episode 13: Lifecycle Hooks, Fake APIs, and AJAX
+-So far, we've been hard-coding the list of assignments directly within our Vue component. But of course, that's not overly realistic. Let's switch over to using the fetch() JavaScript API to request data from a fake API.
+- We need to setup a fake API with `npm install json-server --save-dev`
+- After we create the server, we need to get the server up running using `npx json-server`
+- If will run without a database, it will obvisouly complain that it needs a database to work with. Therefore let's create a database. Remember they are all fake, fake API and fake db.
+- We create a file name `db.json` and move our assignments data from assignments component and fetch them from our new fake API. 
+- Now we run the server: `npx json-server db.json -p 3001`
 
+- We need to understand how vue component Lifecycle works. From beforeCreated(), create(), mounted(), unmounted(). =>Hooks
+- We want to fetch data before the component is mounted, therefore we need to perform an axios/fetch request inside created() hook. 
 
+### Fetch API Recap
+- Fetch API returns which know as a `promise`
+- In a asynchronously, a promise is to say : i will give you your money eventually when i get it. even though for now you can't get your money. Working with promises is to hope for feedback eventually. 
+
+```
+created(){
+        fetch('http://localhost:3001/assignments') //fetch api giving a promise to return data
+            .then(response => response.json()) //tell api, when you will have this data, we call it 'response', I want it in json form. The API will say, i will give you that json but not right away. Another Promise! So we need to do a second 'then`
+            .then(data => { 
+                console.log(data);
+            }); //when you have data, console it.
+    },
+```

@@ -12,11 +12,7 @@ export default {
     `,
     data() {
         return {
-            assignments: [
-                {id:'1', name:'Finish Task', complete: false, tag: 'math'},
-                {id:'2', name:'Read chapter 4 of history of the church', complete: false, tag: 'science'},
-                {id:'3', name:'Turn in homework', complete: false, tag: 'math'}
-            ], 
+            assignments: [], 
             newAssignment: ''
         }
     },
@@ -29,6 +25,13 @@ export default {
         }
     },
 
+    created(){
+        fetch('http://localhost:3001/assignments') //fetch api giving a promise to return data
+            .then(response => response.json()) //tell api, when you will have this data, we call it 'response', I want it in json form. The API will say, i will give you that json but not right away. Another Promise! So we need to do a second 'then`
+            .then(assignments => { 
+                this.assignments = assignments;
+            }); //when you have data, console it.
+    },
     methods: {
         add(title){
             this.assignments.push({
