@@ -196,3 +196,117 @@ created(){
 - We could like to have it just below the in progress assignment-list component by sloting it right below the `<ul></ul>`. 
 - By using `slots` or adding `flags` to the component, it gives us a way to selectively extend the component when we want to(where the component is called). 
 
+# Episode 14: Named Slots
+
+- In the last episode, we managed to create a component that accepts a single defualt slot. But in practicle situations, you will find that some of your components require multiple slots.
+- What if you need a single panel like that follows a certain pattern where by you can stack any element within. 
+- For example from our `assignment-list` component, we have a wrapper that is common across the `in progress` and `complete` assignements.  
+- Let's create a reusable card/panel that accepts heading slot, footer, and content with the same styling as the `assignment-list` component. It will be responsible for card styling and any behaviour. It can be inherited and implemented/extended/overrided by maybe color code.
+
+    ```
+    <div class="bg-gray-700 p-4 border border-gray-600 rounded-lg">
+        <h2 class="font-bold">
+            <slot name="heading"/>
+        </h2>
+    </div>
+
+    ```
+
+- We have created a panel which accepts a slot name 'heading', if you pass any slot with the keyword 'heading' directive, it will be slotted at that space.
+- Implementation: 
+    ```
+    <panel>
+        <template v-slot:heading>
+            Hey There! 
+        </template>
+    </panel>
+
+    ```
+- The `v-slot:...` is where we specify the name of the slot, where it should. otherwise it will be a defualt slot. 
+- You can choose to use this pound sign `#` which is same as `v-slot:`, it's the same thing. 
+    ```
+    <panel>
+        <template #heading>
+            Hey There! 
+        </template>
+    </panel>
+
+    ```
+- NOTE: In our `panel` component, is expecting two slots; heading & content. 
+    ```
+    export default {
+        template: `
+            <div class="bg-gray-700 p-4 border border-gray-600 rounded-lg">
+                <h2 class="font-bold">
+                    <slot name="heading" />
+                </h2>
+
+                <p>
+                    <slot name="content" />
+                </p>
+            </div>
+        `,
+    }
+    ```
+- If we slot in only one slot, like this:
+    ```
+    <panel>
+        <template #content>
+            Sample random paragraph here...with no heading
+        </template>
+    </panel>
+
+    ```
+of course the 'content' will display, but the 'heading' will also render even when we don't need it. 
+- How do with make sure that uneeded components do not render?
+- We use a vue property called `$slots` which stores all defined slots. Therefore, we can use it to check if the slot have something(it's empty by default) and render iff it does.
+    ```
+    <div class="bg-gray-700 p-4 border border-gray-600 rounded-lg">
+        <h2 v-if="$slots.heading" class="font-bold">
+            <slot name="heading" />
+        </h2>
+
+        <p>
+            <slot name="content" />
+        </p>
+
+        <footer v-if="$slots.footer">
+            <slot name="footer" />
+        </footer>
+    </div>
+    ```
+- This way, we are able to create more configurable and flexible components.
+
+- Cool. Now let's take it further and suport themes : 'dark' and 'light'. 
+- We simply define a prop 'theme' with a default value/theme. And we can pass our desired theme whenever we want from anywhere. The styling will be determined by the theme property.
+
+    ```
+    props: {
+        theme: {type: String, default:'dark'},
+    },
+    ```
+    and then use styling in reference to the theme property.
+
+    ```
+    :class="{
+        'p-4 border rounded-lg':true,
+        'bg-gray-700 border-gray-600 text-white' : theme == 'dark',
+        'bg-white border-gray-300 text-black' : theme == 'light',
+    }"
+
+    ```
+- Now that we have a ready made panel, we can use it anywhere in application. 
+- We can go to our assignment-list component and import the panel, register it as a component, and then use it instead of section element.
+
+    ```
+    import Panel from './Panel.js';
+
+    export default {
+        components: {Assignment, AssignmentTags, Panel},
+        template: `
+        <Panel :class="class_type" v-show="assignments.length" class="w-60">
+
+    ```
+- That is it. Well done. 😊
+
+

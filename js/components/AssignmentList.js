@@ -1,11 +1,13 @@
-import Assignment from './Assignment.js'
+import Assignment from './Assignment.js';
 import AssignmentTags from './AssignmentTags.js';
+import Panel from './Panel.js';
+
 export default {
-    components: {Assignment, AssignmentTags},
+    components: {Assignment, AssignmentTags, Panel},
     template: `
-    <section :class="class_type" v-show="assignments.length" class="w-60">
+    <Panel :class="class_type" v-show="assignments.length" class="w-60">
         <div class="flex justify-between items-start">
-            <h2 class="font-bold mb-2">
+            <h2 class="font-bold mb-2"  >
                 {{ title }}
                 <span>({{filteredAssignments.length}})</span>
             </h2>
@@ -27,7 +29,11 @@ export default {
         </ul>
 
         <slot></slot>
-    </section>
+
+        <template #footer>
+            @2022 Copyright 
+        </template>
+    </Panel>
     `,
     props: {
         assignments: Array,

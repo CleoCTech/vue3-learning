@@ -5,19 +5,19 @@ export default {
     components: {AssignmentList, AssignmentCreate},
     template: `
     <section class="flex gap-8">
-    <assignment-list class_type="mb-8" :assignments="filters.inProgress" title="In Progress">
-        <assignment-create @add="add"></assignment-create>
-    </assignment-list>
+        <assignment-list class_type="mb-8" :assignments="filters.inProgress" title="In Progress">
+            <assignment-create @add="add"></assignment-create>
+        </assignment-list>
     
-    <assignment-list 
-        v-show="showCompleted"
-        class_type="mb-0" 
-        :assignments="filters.completed" 
-        title="Completed Assignments" 
-        can-toggle
-        @toggle="showCompleted = !showCompleted"
-        >
-    </assignment-list>
+        <assignment-list 
+            v-show="showCompleted"
+            class_type="mb-0" 
+            :assignments="filters.completed" 
+            title="Completed Assignments" 
+            can-toggle
+            @toggle="showCompleted = !showCompleted"
+            >
+        </assignment-list>
 
     
     </section>
