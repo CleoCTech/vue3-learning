@@ -1,5 +1,9 @@
 {
+  "scripts": {
+    "dev": "concurrently --kill-others \"npx serve\" \"npx json-server db.json -p 3001\""
+  },
   "devDependencies": {
+    "concurrently": "^7.5.0",
     "json-server": "^0.17.1"
   }
 }

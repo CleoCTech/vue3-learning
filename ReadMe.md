@@ -173,3 +173,26 @@ created(){
             }); //when you have data, console it.
     },
 ```
+
+# Episode 13: More Flexible Components With Slots and Flags
+- Here we cover on how to make a componet flexible for reusability and being able to tweak/modified them.
+- You notice if you run `npm serve` and the link on the browser. You're not going to see the assignment list becuase the array is empty. Until we run our server again. So that api can fetch our assignments from fake api. 
+- We can create one script to run these two concurrently. 
+- Inside `package.json` add scripts
+    ```
+    "scripts": {
+        "start": "npx serve & npx json-server db.json -p 3001"
+    },
+
+    ```
+- Note we have used single `&` instead of `&&`. Using double and symbol it will run the first part of the command and the next one. We don't want that.
+- Now if we run our script with keyword `start` => `npm run start`, we are sure all servers will boot simultaneously.
+- If you are on Windows, the script will only run the first part of the command. For some reason, the concurrency is limted. 
+- Alternatively, install concurrency package from here `npm install concurrently --save-dev`. 
+- In package.json, instead of `"start": "..."`  use `"dev": "concurrently --kill-others \"npx serve\" \"npx json-server db.json -p 3001\""`
+- Now run `npm run dev` to start your servers.
+- We can now do some stlying of our assignments component, change to column orientation.
+- When add flex class in the section wrapper of in asignments component. assignment-create component seems to be misplaced
+- We could like to have it just below the in progress assignment-list component by sloting it right below the `<ul></ul>`. 
+- By using `slots` or adding `flags` to the component, it gives us a way to selectively extend the component when we want to(where the component is called). 
+
