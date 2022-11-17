@@ -174,7 +174,7 @@ created(){
     },
 ```
 
-# Episode 13: More Flexible Components With Slots and Flags
+# Episode 14: More Flexible Components With Slots and Flags
 - Here we cover on how to make a componet flexible for reusability and being able to tweak/modified them.
 - You notice if you run `npm serve` and the link on the browser. You're not going to see the assignment list becuase the array is empty. Until we run our server again. So that api can fetch our assignments from fake api. 
 - We can create one script to run these two concurrently. 
@@ -196,7 +196,7 @@ created(){
 - We could like to have it just below the in progress assignment-list component by sloting it right below the `<ul></ul>`. 
 - By using `slots` or adding `flags` to the component, it gives us a way to selectively extend the component when we want to(where the component is called). 
 
-# Episode 14: Named Slots
+# Episode 15: Named Slots
 
 - In the last episode, we managed to create a component that accepts a single defualt slot. But in practicle situations, you will find that some of your components require multiple slots.
 - What if you need a single panel like that follows a certain pattern where by you can stack any element within. 
@@ -310,3 +310,52 @@ of course the 'content' will display, but the 'heading' will also render even wh
 - That is it. Well done. 😊
 
 
+# SECTION 5 Vite
+## Episode 16: Vite
+- Vite is a French word meaning(quick).
+- It is a build tool that takes care of server hot realoading. Which basically means, when i make change on file, the browser will load the changes instantly. 
+- It also includes a build tool that will bundle up your code to make it as performance as possible.
+
+****************************************************************
+- In our project directory `vue-learning`, we are going to to create another project with `vite` and give it a name "_testVite".
+- At the time of the course, the command for creating new app with vite is this `npm create vite@latest` 
+- Vite will ask you few questions like `? Project name: >> _testVite`
+- `? Package name: >> _testVite`
+- `? Select a framework: >> Vue`
+- `? Select a variant: >> JavaScript`
+
+- Then the project will scaffold int directly `_testVite`, cd to this directory and then run `npm install` & `npm run dev`
+
+- We can configure our app to use `@` to as `alias` to our source path, which will make our life easier. 
+- Inside `vite.config.js` add this:
+```
+
+resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  }
+
+```
+****
+```
+export default defineConfig({
+  plugins: [vue()], 
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  }
+})
+```
+- Now in our `main.js` file we can use `@` instead of directly accessing pathe `./../comp.js`
+
+```
+//from this
+import App from './App.vue'
+```
+```
+//to this
+import App from '@/App.vue'
+```
+- Vue/cli give this capability to achieve this.
