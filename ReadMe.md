@@ -359,3 +359,140 @@ import App from './App.vue'
 import App from '@/App.vue'
 ```
 - Vue/cli give this capability to achieve this.
+
+## Episode 17: Little Confusing Things
+- When creating new vue project at least for Nov, 2022. Vue ships with some extra directory like `router`, some `configurations` and more. 
+- The last project `_testVite` we created didn't prompt us to install some of these shipped directories and configurations/base code. 
+- I realise using this command `npm create vite@latest`  and this `npm init vue@latest` brings different results.
+- Now, we are going to create a new project using the command `npm init vue@latest` and then answer the questions of what packages we want to install.
+- `? Project name: >> _vueFirstProject`
+- `? Package name: >> _vuefirstproject`
+- `? Add TypeScript: >> No`
+- `? Add JSX Support: >> No`
+- `? Add Vue Router for Single Page Application development: >> Yes`
+- `? Add Pinia for state management: >> No`
+- `? Add Vitest for Unit Testing: >> No`
+- `? Add an End-to-End Testing Solution: >> No` 
+- `? Add ESLint for code quality: >> Yes` 
+- `? Add Prettier for code formatting: >> Yes` 
+
+- Now we have a porject to demo these 'little confusing things'. 
+- `cd vueFirstProject` and run the following commands:
+  ```
+  npm install
+  npm run lint
+  npm run dev
+  ````
+- Now our project is ready!
+- We went from building basic Vue components to scaffolding a full single-page application with routing, configuration, aliases, and more. In this episode, let's review a handful of small things that I think you might initially find to be confusing.
+
+**alias (@)**
+- Inside `vite.config.js` which looks like this:
+    ```
+    import { fileURLToPath, URL } from 'node:url'
+
+    import { defineConfig } from 'vite'
+    import vue from '@vitejs/plugin-vue'
+
+    // https://vitejs.dev/config/
+    export default defineConfig({
+    plugins: [vue()],
+    resolve: {
+        alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+        }
+    }
+    })
+
+    ```
+- The `@` is configured to represent file url path of `./src` directory.
+- Which means we can go to our vue components and import our component using `@` intead `./`
+
+    ```
+    //from
+    import HelloWorld from './components/HelloWorld.vue'
+
+    //to 
+    import HelloWorld from '@/components/HelloWorld.vue'
+    ```
+- If you're using phpstorm, you will notice after using that symbol, phpstorm get confused and put red Squiggly lines somewhere in your code. 
+- To slove this, we need to create our configuration file called `jsconfig.json` . Then create and object inside with compiler options porperty. 
+
+    ```
+    {
+        "compilerOptions": {
+            "paths": {
+                "@/*" : ["./src/*"] //you want the left symbol side to resolve to the right side of the directoty
+            }
+        }
+    }
+    ```
+- Of course this is a kind od repetion of what is done inside `vite.config.js` but `jsconfig.js` is what phpstorm understands at least for this time of writing and it will interpret.
+- With vscode, it does also put red Squiggly lines somewhere in your code. Which we will solve later.
+
+**RouterLink**
+- It allows you to navigate to other web pages with a tag without performing full page request as a traditional page requests does. 
+- It kind use ajax api to request for a page dynamically.
+
+    ```
+    <script setup>
+    import { RouterLink, RouterView } from 'vue-router'
+    import HelloWorld from '@/components/HelloWorld.vue'
+    </script>
+
+    <template>
+    <header>
+        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+
+        <div class="wrapper">
+        <HelloWorld msg="You did it!" />
+
+        <nav>
+            <RouterLink to="/">Home</RouterLink>
+            <RouterLink to="/about">About</RouterLink>
+        </nav>
+        </div>
+    </header>
+
+    <RouterView />
+    </template>
+    ```
+-  From the above code we have nav tag which has RouterLinks to different pages.
+- And then we have `<RouterView />` which renders the corresponding vue component that  `<RouterLink to="/about">About</RouterLink>` will request.
+
+- Our router link (url) is `/about`. if we visit to `router` directory, we will see what is assigned to this url. Let's have a look'.
+
+    ```
+    import { createRouter, createWebHistory } from 'vue-router'
+    import HomeView from '../views/HomeView.vue'
+
+    const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: [
+        {
+        path: '/',
+        name: 'home',
+        component: HomeView
+        },
+        {
+        path: '/about',
+        name: 'about',
+        // route level code-splitting
+        // this generates a separate chunk (About.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import('../views/AboutView.vue')
+        }
+    ]
+    })
+
+    export default router
+
+    ```
+- We can see how the `urls` are asigned to various components. We are saying, if the url is `/` the corresponding component is `HomeView`.
+
+- Use this `RouterLink` even when you're in a different vue component instead of `href`.
+- You just need to import in yout vue component:
+```
+import { RouterLink} from 'vue-router'
+```
+

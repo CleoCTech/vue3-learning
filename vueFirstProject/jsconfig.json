@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "@/*" : ["./src/*"] //you want the left symbol side to resolve to the right side of the directoty
+        }
+    }
+}
