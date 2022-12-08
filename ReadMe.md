@@ -496,3 +496,58 @@ import App from '@/App.vue'
 import { RouterLink} from 'vue-router'
 ```
 
+# SECTION 6: The Composition API
+## Episode 18: Two Mental Leaps to Script Setup
+- I must admit, I feel bad for what I'm about to do. You were becoming so comfortable, and I had to suddenly throw a wrench into the gears. In this lesson, let's mentally adjust to working with the Composition API and script setup.
+- There are two different ways to structure and organise your project in Vue. 
+- Originally when Vue was launched, we only had `Options API`. 
+- As of Vue 3.0, they gave us `Composition API`. 
+- `Composition API` comes with `script setup` which will compile down your code to required standard. 
+- One of the keys things in `script setup`, you do not have to return anything i.e data. All you need to do is to define it and it's magically available in the template. 
+  ```
+  <script setup>
+    import TheWelcome from '../components/TheWelcome.vue'
+    import { ref } from 'vue'
+
+    let message = ref("Hello World");
+
+    setTimeout(() => {
+        message.value ="I have been changed !"
+    }, 3000);
+  </script>
+
+  <template>
+    <p>
+      <input type="text" v-model="message" />
+    </p>
+  </template>
+  ```
+- We use the macro word `ref` which makes our value reactive to changes.
+- As per the popular opinion by devs, they argued that there will be a tendency to forget use `.value` to access any of the reactive properties.
+- Another option to solve this, is to use again a macro feature `reactivityTransform` - which is an experimental feature at the time of this writting.
+- For experimental features, we have to turn them on inside `vite.config.js` file;
+  ```
+  export default defineConfig({
+    plugins: [vue({
+        reactivityTransform: true, //experimental feature. 
+    }
+    )],
+    resolve: {
+        alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+        }
+    }
+  })
+  ```
+- Having done so, we don't need now to import `ref` in our `script setup` and also, we do not need to get `.value` from our reactive props. Instead to this: 
+  ```
+  <script setup>
+    import TheWelcome from '../components/TheWelcome.vue'
+
+    let message = $ref("Hello World");
+
+    setTimeout(() => {
+        message ="I have been changed !"
+    }, 3000);
+  </script>   
+  ```
