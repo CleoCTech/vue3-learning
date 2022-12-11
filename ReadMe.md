@@ -702,3 +702,58 @@ import { RouterLink} from 'vue-router'
     </template>
 
   ```
+## Episode 21: Refactor to defineProps and defineEmits
+- Let's review a couple other Composition API gotchas in this episode. Using the example of an enhanced "tabbable" textarea, we'll learn how to use defineProps and defineEmits when using script setup.
+- Let's say you have a `textarea` and you want the user to be able to use tab key to move text within the the textarea. 
+- We create a function called `onTabPress(e)` which takes that event from the textarea.
+
+    ```
+    function onTabPress(e){
+
+        let textarea = e.target;
+        let val = textarea.value,
+        start = textarea.selectionStart,
+        end = textarea.selectionEnd;
+
+        textarea.value = val.substring(0, start) + "\t" + val.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start +1;
+    
+    }
+    ```
+- And the we listen keydown in our textarea element. 
+  ```
+    <textarea  @keydown.tab.prevent="onTabPress"  style="width: 300px; height:300px;">Hi there</textarea>
+
+  ```
+- Note that, with vue you can specify the type of key you want to listen to, it can be `Enter` or `Tab` for our case. 
+- The we have have to prevent the default behaviour of the keydown. 
+- Imagine if you would be having multiple textarea elements where you want the same behaviour. The best approach is to extract the above code to dedicated component. 
+- Inside our `components` directory, lets make our `TabbableTextarea` component.
+  ```
+    <script setup>
+        defineProps({
+            modelValue: String
+        });
+
+        let emit = defineEmits(['update:modelValue'])
+
+        function onTabPress(e){
+
+            let textarea = e.target;
+            let val = textarea.value,
+            start = textarea.selectionStart,
+            end = textarea.selectionEnd;
+
+            textarea.value = val.substring(0, start) + "\t" + val.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start +1;
+
+        }
+    </script>
+
+    <template>
+        <textarea 
+        @keydown.tab.prevent="onTabPress" 
+        @keyup="emit('update:modelValue', $event.target.value);"
+        v-text="modelValue" />
+    </template>
+  ```
