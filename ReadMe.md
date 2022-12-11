@@ -591,7 +591,7 @@ import { RouterLink} from 'vue-router'
         }
     </script>
   ```
-- If we want to this kind of notifcation to `About Page` or `Contact Us Page`, we have to repeatedly copy and paste. And if you want to change the styling of the notification, you will have again to edit the same code in all pages. This does not make sense. We need to have things in sync. 
+- If we want to take this kind of notifcation to `About Page` or `Contact Us Page`, we have to repeatedly copy and paste. And if you want to change the styling of the notification, you will have again to edit the same code in all pages. This does not make sense. We need to have things in sync. 
 - To solve this, we can use some `Vue` mechanism called `Mixins`, which is a sort of like `traits` in `PHP` or `ThreadTools` if you took `Java Multi-threading course` 😊
 - Let's a new directory called `mixins` and file `flash.js` .
 - When you are creating `mixins`, one nice thing is; the object you're exporting will be identical to all of your vue components and whatever you create inside your object, it will be `mixed in` iniside your component.
@@ -640,3 +640,65 @@ import { RouterLink} from 'vue-router'
     </script>
   ```
 - Now we can easily modify from one single source of truth. 
+
+## Episode 20: Composable Example: Local Storage
+- Let's review another example of a composable. This time, we'll leverage localStorage and Vue reactivity to "remember" a form input's value - even if you refresh the page.
+    ```
+    import { ref, watch } from 'vue';
+
+    export function useLocalStorage(key, val = null) {
+        let storedVal = read();
+
+        if (storedVal) {
+            val = ref(storedVal);
+        } else {
+            val = ref(val); 
+            write();
+        }
+
+        watch(val, write, {deep : true}); //when you turn deep into true it can be costly in terms of performance
+
+        function read() {
+            return JSON.parse(localStorage.getItem(key));
+        }
+        function write(){
+            if (val.value == '' || val.value == null) {
+                localStorage.removeItem(key);
+            } else {
+                localStorage.setItem(key,  JSON.stringify(val.value));
+            }
+            
+        }
+
+        return val;
+    }
+    ```
+- Now we can leverage this tool in our Vue components.
+  ```
+    <script setup>
+        import { ref } from 'vue';
+        import { useLocalStorage } from "@/composables/useLocalStorage";
+        
+        let food = useLocalStorage('food');
+        let age = useLocalStorage('age');
+        let obj = useLocalStorage('obj', {one : 'one', two : 'two'} );
+
+        setTimeout(() => {
+        obj.value.one = 1;
+        obj.value.two = 2;
+        }, 3000);
+
+    </script>
+
+    <template>
+        <main>
+            <p>
+            What is your favorite food? <input type="text" v-model="food"/>
+            </p>
+            <p>
+            What is yourage? <input type="text" v-model="age"/>
+            </p>
+        </main>
+    </template>
+
+  ```
