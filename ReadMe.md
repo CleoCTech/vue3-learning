@@ -551,3 +551,92 @@ import { RouterLink} from 'vue-router'
     }, 3000);
   </script>   
   ```
+
+  ## Episode 19: From Mixins to Composables
+  - To understand the benefits of `script setup`, let's begin implementing code reuse and see how it goes.
+  - Let's create notification alert on button click using `Options API`;
+  
+  ```
+    <script>
+        export default {
+            methods: {
+            flash(message){
+                alert(message);
+            }
+            },
+        }
+    </script>
+
+    <template>
+        <main>
+            <button @click="flash('It Works!')">Click Me</button>
+        </main>
+    </template>
+  ```
+- We can use `sweetalert` package to make our notification fancy. 
+- Let's cd to `vueFirstProject` directory
+- `npm install sweetalert --save-dev`
+- Then import it inside `HomeView.vue` component. 
+  - `import swal from 'sweetalert'`
+  - Then replace `alert` with `swal`
+  ```
+    <script>
+        import swal from 'sweetalert'
+        export default {
+            methods: {
+            flash(message){
+                swal(message);
+            }
+            },
+        }
+    </script>
+  ```
+- If we want to this kind of notifcation to `About Page` or `Contact Us Page`, we have to repeatedly copy and paste. And if you want to change the styling of the notification, you will have again to edit the same code in all pages. This does not make sense. We need to have things in sync. 
+- To solve this, we can use some `Vue` mechanism called `Mixins`, which is a sort of like `traits` in `PHP` or `ThreadTools` if you took `Java Multi-threading course` 😊
+- Let's a new directory called `mixins` and file `flash.js` .
+- When you are creating `mixins`, one nice thing is; the object you're exporting will be identical to all of your vue components and whatever you create inside your object, it will be `mixed in` iniside your component.
+- Iniside our `flash.js` file:
+  ````
+  import swal from 'sweetalert'
+  export default {
+    methods: {
+      flash(message){
+        return swal('Success!',message, 'success');
+      }
+    },
+  }
+  ````
+- And now if we want to use this flash in any component, we will import it like this;
+  ```
+   <script>
+    import flash from '@/mixins/flash';
+
+    export default{
+        mixins: [flash],
+    }
+   </script>
+  ```
+- This traditional, mixin-based approach works for use. But again we still have a problem. Imagine you want have several mixins being pulled in and you want to find where the flash message is defined. You will have to go through every mixin just find a message variable. Even worse, is when you will be having mixins from a library. This can be confusing. The more recommended approach is to use something know as `composables`.
+- Let's create new directory `composables` and make a file called: `useFlash.js`
+  ```
+    import swal from "sweetalert";
+
+    export function useFlash() {
+        function flash(message){
+            return swal('Success!',message, 'success');
+        }
+
+        //return whatever you want to expose to outside world
+        return { flash };
+    }
+  ```
+- Let's go to our `HomeView.vue` component and use this approach instead of `mixins`
+  ```
+    <script setup>
+    import {useFlash} from "@/composables/useFlash";
+
+    let { flash } = useFlash();
+    
+    </script>
+  ```
+- Now we can easily modify from one single source of truth. 
