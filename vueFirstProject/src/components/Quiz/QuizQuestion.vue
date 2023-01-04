@@ -1,13 +1,9 @@
 <template>
     <div>
-        <h1>Quiz</h1>
+        <textarea v-model="state.name" cols="30" rows="10"></textarea>
     </div>
 </template>
 
 <script setup>
-
+import { state } from "@/stores/quizStore.js";
 </script>
-
-<style  scoped>
-
-</style>

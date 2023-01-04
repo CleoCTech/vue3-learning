@@ -757,3 +757,250 @@ import { RouterLink} from 'vue-router'
         v-text="modelValue" />
     </template>
   ```
+## Episode 22: Dependency Injection With Provide and Inject
+- Let's next move on to a discussion about dependency injection, and what that might look like within the context of a Vue application. One issue you'll quickly run into is what we refer to as `"prop drilling."` Let's learn what it is, and how to fix it.
+- Sometimes you run into awkward situations, where you have to pass a prop down in many levels. We refer thia as `prop drilling`
+- In Vue 3, you can use the `provide `and `inject` functions to share state and behavior between components in a hierarchical tree. This is known as dependency injection.
+
+- From our example of `Quiz` , we are passing props `quiz` to child component `Quiz` from our `Homeview` parent component. 
+    ```
+    <script setup>
+    import Quiz from "@/components/Quiz/Quiz.vue";
+
+    </script>
+
+    <template>
+    <main>
+        <Quiz :quiz = "{name: 'My first question ', questions:[]}"/>
+    </main>
+    </template>
+
+    ```
+- Inside `Quiz` component, we are still passing it down `QuizFooter` child component. 
+
+    ```
+    <template>
+
+    <div>
+
+        <QuizHeader />
+
+        <QuizQuestion />
+
+        <QuizFooter :quiz = "quiz"/>
+    </div>
+        
+    </template>
+
+    <script setup>
+
+    import QuizHeader from "@/components/Quiz/QuizHeader.vue";
+    import QuizFooter from '@/compenents/Quiz/QuizFooter.vue';
+    import QuizQuestion from '@/components/Quiz/QuizQuestion.vue';
+
+
+    defineProps({ quiz:Object });
+
+    </script>
+
+    ```
+- And then still pass the quiz object to the `QuizFooterLinks` and that just a few.
+    ```
+    <template>
+        <footer>
+            <h4>Quiz Footer</h4>
+            <QuizFooterLinks :quiz="quiz" />
+        </footer>
+    </template>
+
+    <script setup>
+    import QuizFooterLinks from '@/components/Quiz/QuizFooterLinks.vue';
+
+
+    defineProps({
+        quiz: Object
+    });
+    </script>
+    ``` 
+- You may find yourself drillimg to more than 5 components. In other words, you are just forcing certain components to accept a prop for a sole purpose of passing it to nested component. 
+- That's why we need to leaverage `provide` and `inject` where it's needed only (must be to child component only). 
+- Note that provide and inject only work within the same parent-child tree. If you want to share state between unrelated components, you can use a global store like Vuex/Spinia now or a custom event bus.
+
+- We provide our value from the parent component and inject it to only components that needs it. 
+
+    ```
+    import { provide, ref } from "vue";
+
+    defineProps({ quiz:Object });
+
+    let name = ref('John Doe');
+
+    provide('name', name);
+    ```
+- From the example above we are providing data but in a reactive way such that if the data is changed from child component where it's injected, it's immediately updated to the source of truth, i.e the provider.
+
+- Inside the receiver component, we inject the data like this:
+    ```
+    import { inject } from 'vue';
+
+    defineProps({
+        quiz: Object
+    });
+
+    let name  = inject('name');
+
+    setTimeout(() => {
+        name.value = 'New Name';
+    }, 3000);
+
+
+    //and display it like this
+
+    <template>
+    <div>
+        <h5>{{ quiz.name }}}</h5>
+        <h5>{{ name.value }}}</h5>
+
+        <ul>
+            <li> <a href="#">Get a Job</a></li>
+            <li> <a href="#">Contact Us</a></li>
+        </ul>
+    </div>
+    </template>
+    ```
+-  The setTimeout() method is to test if the value of name is changed from child component can be updated to the parent. And it will since we provided it as a reactive data by using `ref()` => `let name = ref('John Doe')`
+- In some other cases, the property my be updated and you don't know the specific component that is changing/updating data that you provide. If you want to take control of this, you can create a rule, that the only place you can change the data is in the parent component where it's being provided.
+-  If we take this approach, we have to change how we provide data, we provide an object instead of a string. The object will contain the data and the equivalent of a mutator - which will be a function that will be responsible for changing the name/updating data. 
+
+    ```
+    provide('name', {
+        name: name,
+        changeName: () => name.value = 'Name Changed'
+    });
+    ```
+- Notice, now th logic for updating name, now exits within the parent. And if we wanna trigger the change, we simply pass a reference to this function to the child component.
+
+    ```
+    import { inject } from 'vue';
+
+    defineProps({
+        quiz: Object
+    });
+
+    //we accept the object properties for us to use them
+    let {name, changeName }  = inject('name');
+
+
+    //and change the name when we click this button
+    <template>
+        <button @click="changeName">{{ name.value }}}</button>
+    </template>
+    ```
+- We can agree that, this approach is cleaner compared to drilling down of props to all children components. 
+
+
+## Episode 23: Store State in an External File
+- So far, we've reviewed two different ways to share state across a wide range of components. But we're not done yet! Let's review a simple example that will take you a long way. There's nothing keeping you from extracting data, or state, to a reusable external file.
+
+- In our `HomeView` component, we hard coded the initial state for quiz. 
+    ```
+    <Quiz :quiz = "{name: 'My first question ', questions:[]}"/>
+    ```
+- We can extract this and call it `state`
+    ```
+    //extracted state/data
+    let state = "{name: 'My first question ', questions:[]}";
+    ```
+- You can actually store this state/date within it's own file.
+- Within `src` directory, lets create a folder and call it `stores`. Within here, we will have a file called `quizStore.js`. 
+- Then the grab the extracted state and put it inside `quizStore.js` file. 
+- Then you obviously want to make it accessible to the outside world. so you will have to export it. 
+    ```
+    //quizStore.js 
+    export let state = "{name: 'My first question ', questions:[]}";
+    ```
+- Inside our `HomeView` component, we can import it with the name we called it. 
+    ```
+    <script setup>
+    import Quiz from "@/components/Quiz/Quiz.vue";
+    import {state} from "@/stores/quizStore.js";
+
+
+    </script>
+
+    <template>
+    <main>
+        <Quiz :quiz = "state"/>
+    </main>
+    </template>
+
+    ``` 
+- In our `Quiz` component, we can get rid of `provide` and `inject` stuff and import the `state` from it's file instead of accepting any `props`. 
+- We can also get rid of passing quiz on down drill:
+    ```
+    //from
+    <QuizFooter :quiz = "quiz"/>
+
+    //to
+    <QuizFooter />
+    ```
+- Inside `QuizFooterLinks` , we can get rid of `inject` entirely and import a state:
+
+    ```
+    <template>
+        <div>
+            <h5>{{ state.name }}}</h5>
+            <ul>
+                <li> <a href="#">Get a Job</a></li>
+                <li> <a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </template>
+
+    <script setup>
+    import {state} from "@/stores/quizStore.js";
+
+    </script>
+
+    ```
+- This is an alternative way of managing a `state` or `data` as we were doing in other approach of `provide` and `inject`, in a particularly, a `state/data` that needs to be accessible globally or at least a wide range of components.
+- These are situations where you need to access a wide range of components:
+    - You can have a state for the current user i.e `currentUserStore.js`
+    - A shooping cart, when you have a shopping cart, you ned to access it's `state`across the entire page.  
+- What we have now, is quite simple and it's not flexible. Let's see how...
+- In our `QuizFooterLinks` component. lets add a button and when clicked it changes the state.name or quiz name to a new given name.
+
+    ```
+    <template>
+        <div>
+            <h5>{{ state.name }}}</h5>
+            <button @click="state.name = 'A New Quiz Name'">Change Quiz Name</button>
+
+            <ul>
+                <li> <a href="#">Get a Job</a></li>
+                <li> <a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </template>
+
+    <script setup>
+    import {state} from "@/stores/quizStore.js";
+
+    </script>
+    ```
+- If you run our project, you will notice that the name is being updated but not being reflected in `<h5>{{ state.name }}}</h5>`, and that's because, we just updated the string, and no point we specified that it should be `reactive`
+- We can to our store and make our `state/data` reactive. 
+    ```
+    //quizStore.js 
+    import { reactive } from "vue";
+
+    export let state =  reactive({
+        name : 'My first question ',
+        questions:[]
+    });
+    ```
+- Notice we using keyword `reactive` instead of `ref`. Well, `reactive` is used when we are dealing with objects wherehas `ref` is good when we have variables. 
+- This will get job done in most cases but until you start building signficantly more complex applications that you might run into some roadblocks. And those roadblocka are like:
+    - This `state` is changing and i don't know why?
+    - Or I need to hook in when the state changes and do some kind of operation like ajax query or update localstorage. 
+- It's those situations when you might need to reach for something a bit more flexible. And we shall see in the next episode. 

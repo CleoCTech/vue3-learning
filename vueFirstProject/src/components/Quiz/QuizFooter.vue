@@ -1,17 +1,13 @@
 <template>
-    <footer>
+    <div>
         <h4>Quiz Footer</h4>
-        <QuizFooterLinks :quiz="quiz" />
-    </footer>
+        <QuizFooterLinks />
+    </div>
+    
 </template>
 
 <script setup>
-import QuizFooterLinks from '@/components/Quiz/QuizFooterLinks.vue';
-
-
-defineProps({
-    quiz: Object
-});
+import QuizFooterLinks from "@/components/Quiz/QuizFooterLinks.vue";
 
 </script>
 
