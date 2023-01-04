@@ -1004,3 +1004,47 @@ import { RouterLink} from 'vue-router'
     - This `state` is changing and i don't know why?
     - Or I need to hook in when the state changes and do some kind of operation like ajax query or update localstorage. 
 - It's those situations when you might need to reach for something a bit more flexible. And we shall see in the next episode. 
+
+## Episode 24: Direct Mutation Concerns
+- Before we move on to a dedicated tool for managing globally accessible state (Pinia), let's first review some new terminology and discuss potential concerns related to directly mutating state.
+
+    - Action = Method
+    - State =  data
+
+- Let's create a new page called `CounterView` which will show the `count`.
+- We create a `state` of this counter in external file `counterStore.js` and call it  `counter`
+    ```
+    import { reactive } from "vue";
+
+    export let counter = reactive({
+
+        //state
+        count: 0,
+
+        //action
+        increment (){
+            if (this.count <=9) {
+                this.count++;
+            }
+        
+        }
+    });
+    ```
+- Then and import the counter inside  `CounterView` component. 
+    ```
+    <template>
+        <div>
+            <h1>{{ counter.count }}</h1>
+            <button @click="counter.increment()">Incriment</button>
+        </div>
+    </template>
+
+    <script setup> 
+    import { counter } from "@/stores/counterStore.js";
+
+    </script>
+
+    ```
+- We have a button to increment our count, such that we do not increment/chnage/mutate the state of data directly from outside the it's 'store'. Rather we could like to have the logic of changing the state to be inside it's store and us is to call it. 
+- This is what tool called `Pinia` give you and even more features. 
+- In the next episode we will learn how to manage state with `Pinia` - a dedicated tool fro dealing with global **state management**
