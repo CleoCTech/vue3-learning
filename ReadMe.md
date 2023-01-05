@@ -1151,3 +1151,95 @@ import { RouterLink} from 'vue-router'
 - Let's prepare a dashboard for managing a team - perhaps for a SaaS. In this first episode, we'll review the design and then begin organizing the layout into a series of Vue components.
 - As we have been creating this project, we have faced the first annoying thing of `prop drilling` down to child components. Nevertheless, the app is good and dynamic.
 - In the next episode we will be using a dedicated tool -`pinia` to manage state of team. 
+
+## Episode 27: Build and Seed a Team Store
+- In this episode, we'll extract a dedicated Pinia store for managing the state for a team. We'll also discuss how you might go about seeding a store with initial date that is fetched asynchronously.
+
+- The first step is to create our store - `TeamStore.js` within stores directory. 
+- We can import it in `TeamView` component :
+    ```
+    import {useTeamStore} from "@/stores/TeamStore";
+
+    let team = useTeamStore();
+    ```
+- Which means now we are not getting data directly from `team.js` file to `TeamView`
+- All data management will be done in our store file.
+- We then need to seed our store from database, or API call, or in our case from json file. 
+    ```
+    import { defineStore } from "pinia"
+
+    export let useTeamStore = defineStore('team', {
+
+        state(){
+            return {
+                name: '',
+                spots:  0,
+                members: []
+            }
+        },
+
+        actions: {
+        fill(){
+            //fill the initial state from AJax call or any state
+
+            import ('@/team.json').then(r => {
+                let data = r.default;
+
+                this.$patch({
+                    name: data.name,
+                    spots: data.spots,
+                    members: data.members,
+                });
+                
+            });
+        }
+    }
+
+    });
+    ```
+- You can make the fill method to be `async`
+    ```
+    actions: {
+            async fill(){
+                //fill the initial state from AJax call or any state
+                let r= await import('@/team.json');
+                this.$state = r.default;
+            }
+        }
+    ```
+- One big benefit to this approach, is that we delay the importing of out `team.json` file until when it's needed. Take an example when you are browsing a website and you are visiting about page, home page etc...all this time your are not importing `team.json`, you old do so when the user visits Team page.  
+- Because now we have shared a global state for team, we can now remove props of team object and replace it by importing the store whenever we need it. 
+- Now we are leavaraging a dedicated store tool `pinia`, which allows your to manipulate the state on a fly. 
+    ```
+    import {useTeamStore} from "@/stores/TeamStore";
+
+    let team = useTeamStore();
+    team.fill();
+
+    setTimeout(() => {
+        team.spots = 10;
+    }, 2000);
+
+    ```
+- We can also move logic calculations/computed to the store under getters. For example where we get remaining spots there are in a team. 
+- One last thing is to review how we declare a `state` in our store. You may find it different in the documentation and it's the syntax for those using a typescript, which can still work here. I also find it awesome. Let's update it: 
+
+    ```
+    //from this:
+    state(){
+        return {
+            name: '',
+            spots:  0,
+            members: []
+        }
+    },
+
+    //to this:
+    state: () => ({
+        name: '',
+        spots:  0,
+        members: []
+    }),
+    ```
+- Recommend this approach. Thank you. 
+
