@@ -1048,3 +1048,97 @@ import { RouterLink} from 'vue-router'
 - We have a button to increment our count, such that we do not increment/chnage/mutate the state of data directly from outside the it's 'store'. Rather we could like to have the logic of changing the state to be inside it's store and us is to call it. 
 - This is what tool called `Pinia` give you and even more features. 
 - In the next episode we will learn how to manage state with `Pinia` - a dedicated tool fro dealing with global **state management**
+
+## Episode 25: Say Hello to Pinia
+
+- I think we're finally ready to review dedicated tooling for managing global state. The go-to option these days is Pinia. Compared to our make-shift store from the previous episodes, Pinia will provide us with better devtool support, hot reloading, time traveling, and more!
+
+- We will use the counter store that we created and convert it to pinia. 
+- First of all, installl `pinia`
+
+    ```
+    npm install pinia
+    ```
+- Next, go to the entry point which is `main.js` and let's import `pinia`. 
+    ```
+    import { createPinia } from 'pinia';
+    ```
+- And then register it as plugin
+    ```
+    app.use(createPinia())
+    ```
+- `main.js` Entry file:
+    ```
+    import { createApp } from 'vue';
+    import { createPinia } from 'pinia';
+    import App from './App.vue';
+    import router from './router';
+
+    import './assets/main.css'
+
+    const app = createApp(App)
+
+    app.use(router)
+    app.use(createPinia())
+    app.mount('#app')
+
+    ```
+
+- Let's buold our counterStore newly with `pinia`
+    ```
+    import { defineStore } from 'pinia'
+
+    export let usecounterStore = defineStore('counter', {
+        //data
+        state(){
+            return {
+                count: 0,
+            };
+        },
+
+        //actions
+        actions: {
+            increment(){
+                if (this.count < 10) {
+                    this.count ++;
+                }
+                
+            }
+        },
+
+        //computed 
+        getters : {
+            remaining(){
+                return 10 - this.count;
+            }
+        }
+    });
+
+    //inside CountView  Component
+    import { usecounterStore } from "@/stores/CounterStore.js";
+
+    let counter = usecounterStore();
+    ```
+- The difference here from previsous manaul way is that we need to call the function `usecounterStore` in `CounterStore.js`
+
+    ```
+    <template>
+        <div>
+            <h1>{{ counter.count }}</h1>
+            <button 
+            @click="counter.increment()"
+            :disabled="!counter.remaining"
+            >Incriment ({{ counter.remaining }}) Remaining</button>
+        </div>
+    </template>
+
+    <script setup> 
+    import { usecounterStore } from "@/stores/CounterStore.js";
+
+    let counter = usecounterStore();
+
+
+    </script>
+
+    ```
+- From the above example, we have seen the structure of `pinia` in our store
