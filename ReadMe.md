@@ -1142,3 +1142,12 @@ import { RouterLink} from 'vue-router'
 
     ```
 - From the above example, we have seen the structure of `pinia` in our store
+
+
+# SECTION 8 Team Dashboard Exercise
+
+## Episode 26: Code Organization
+- Now that you're little more comfortable to how you might go about in mantaining and organising the state. Let's work on a more realistic exercise in this chapter and all the pieces together. 
+- Let's prepare a dashboard for managing a team - perhaps for a SaaS. In this first episode, we'll review the design and then begin organizing the layout into a series of Vue components.
+- As we have been creating this project, we have faced the first annoying thing of `prop drilling` down to child components. Nevertheless, the app is good and dynamic.
+- In the next episode we will be using a dedicated tool -`pinia` to manage state of team. 
