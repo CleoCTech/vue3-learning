@@ -1243,3 +1243,43 @@ import { RouterLink} from 'vue-router'
     ```
 - Recommend this approach. Thank you. 
 
+# SECTION 9 Transitions, Teleports, Tips
+
+## Episode 27: Build a Modal Component
+ - This chapter we will be focusing on something else. 
+ - Before I show you how transitions work, let's first build a modal component with Vue. As you'll find, it's surprisingly easy to create and toggle.
+ - In our TeamView, we have a button to add a member but isn't working at the moment. Let's take a chance to create a modal and open modal when user clicks this button. 
+ - Let's create a new vue component `Modal` 
+ - Once we design the our modal, we can define a boolean prop `show` which will toggle the display of the modal. 
+    ````
+    <script setup>
+    defineProps({
+        show: Boolean,
+    });
+    </script>
+
+    <template>
+        <div v-if="show" class="modal-mask">
+            <div class="modal-container">
+                <header>Header Text</header>
+
+                <div>Main Text</div>
+
+                <footer>Footer</footer>
+            </div>
+        </div>
+    </template>
+
+    ````
+- We then create a source of truth which can toggle : `true`/`false` to show/hide the modal.
+- We have achived in creating the Modal and interact with it effectively. In the next episode, let's do some transitions. 
+- **NB** : We had some vscode squash lines for showing errors and we solved by adding `vetur.config.js` file with some rules. Her the links to the solution: 
+    ```
+    Error: [vue/no-multiple-template-root] The template root requires exactly one element.eslint-plugin-vue
+
+    Answer: 
+    https://vuejs.github.io/vetur/guide/setup.html#advanced
+	https://stackoverflow.com/questions/64867504/vue-3-the-template-root-requires-exactly-one-element-eslint-plugin-vue
+	https://stackoverflow.com/questions/65601841/problem-vue-no-multiple-template-root-occurs-how-do-i-fix-it
+
+    ```
