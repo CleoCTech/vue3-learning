@@ -1363,3 +1363,6 @@ import { RouterLink} from 'vue-router'
 - Let's refractor this, by cutting off the modal from `TeamView` component to it's domain modal `AddMemberModal`.
 - Whenever the button should display, we can reference the `Modal`, once you reference the Modal and it has it's own button, the button will be loaded by defau
 - And this is `Teleporting`!
+
+## Episode 31: That's All She Wrote
+- I hate to say it, but that's all she wrote. We're all wrapped up for this series. But, of course, there's still more to learn. In this final episode, we'll review some recommended follow-up resources and courses. Thanks for your effort!
