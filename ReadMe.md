@@ -1317,20 +1317,49 @@ import { RouterLink} from 'vue-router'
     >
     ```
 - Second approach is to pass the name to the transition have `css` classes starting with the same name. 
+    ```
+    <Transition
+    name="modal"
+    >
+
+    </Transition>
+    //css
+    .modal-enter-active, .modal-leave-to{
+    transition: opacity 1s;
+    }
+    .modal-enter-from{
+    opacity: 0;
+    }
+    .modal-enter-to, .modal-leave-from{
+    opacity: 100;
+    }
+    ```
+## Episode 30: Teleporting
+- If you've ever built a modal before, you're probably aware that it's generally considered a good practice to place it at the bottom of the document, just before the closing body tag. In this episode, I'll show you how to do just that by leveraging Vue's `Teleport` component.
+- Let's go to our `TeamView` component where we are referencing our `Modal`, we also wrap it in with `Teleport` 
 ```
-<Transition
-   name="modal"
-  >
-  
-</Transition>
-  //css
-.modal-enter-active, .modal-leave-to{
- transition: opacity 1s;
-}
-.modal-enter-from{
-  opacity: 0;
-}
-.modal-enter-to, .modal-leave-from{
-  opacity: 100;
-}
+<Teleport to="body">
+    <Modal :show="showModal" @close="showModal = false">
+      <template #default>
+        <p>Need to add a new member to your team?</p>
+
+        <form class="mt-6">
+          <div class="flex gap-2">
+            <input type="email" placeholder="Email Address..." class="flex-1">
+            <button>Add</button>
+          </div>
+        </form>
+      </template>
+    </Modal>
+</Teleport>
 ```
+
+- Just think of this like saying; anything within inside `Teleport`, i want you teleport `to` somewhere. 
+- In our cae we are telling `Teleport` to append everything to the bottom of the body `tag`
+- You can the project and inspect the element, you will notice that it's a direct child of a body tag.
+- **NB: Should never deeply nest your modal inside other components.**
+- This structure gives us flexibility to separate `Modal` to it's domain even with it's toggle button, 
+- For example you can have `AddMemberModal` component and have `AddUserModal` component, each Modal will have it's own toggle button. i.e `Add Member` and `Add User` buttons respectiely. 
+- Let's refractor this, by cutting off the modal from `TeamView` component to it's domain modal `AddMemberModal`.
+- Whenever the button should display, we can reference the `Modal`, once you reference the Modal and it has it's own button, the button will be loaded by defau
+- And this is `Teleporting`!
