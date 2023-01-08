@@ -5,19 +5,23 @@
 </script>
 
 <template>
+  <Transition
+   name="modal"
+  >
     <div v-if="show" class="modal-mask">
-    <div class="modal-container">
-      <div>
-        <slot>default body</slot>
-      </div>
+      <div class="modal-container">
+        <div>
+          <slot>default body</slot>
+        </div>
 
-      <footer class="modal-footer">
-        <slot name="footer">
-          <button @click="$emit('close')">Close</button>
-        </slot>
-      </footer>
+        <footer class="modal-footer">
+          <slot name="footer">
+            <button @click="$emit('close')">Close</button>
+          </slot>
+        </footer>
+      </div>
     </div>
-  </div>
+ </Transition>
 </template>
 
 <style>
@@ -52,4 +56,13 @@
   background: #c8c8c8;
 }
 
+.modal-enter-active, .modal-leave-to{
+ transition: opacity 1s;
+}
+.modal-enter-from{
+  opacity: 0;
+}
+.modal-enter-to, .modal-leave-from{
+  opacity: 100;
+}
 </style>

@@ -1245,7 +1245,7 @@ import { RouterLink} from 'vue-router'
 
 # SECTION 9 Transitions, Teleports, Tips
 
-## Episode 27: Build a Modal Component
+## Episode 28: Build a Modal Component
  - This chapter we will be focusing on something else. 
  - Before I show you how transitions work, let's first build a modal component with Vue. As you'll find, it's surprisingly easy to create and toggle.
  - In our TeamView, we have a button to add a member but isn't working at the moment. Let's take a chance to create a modal and open modal when user clicks this button. 
@@ -1283,3 +1283,54 @@ import { RouterLink} from 'vue-router'
 	https://stackoverflow.com/questions/65601841/problem-vue-no-multiple-template-root-occurs-how-do-i-fix-it
 
     ```
+## Episode 29: Two Ways to Transition
+ - The modal we created in the previous episode is looking decent now. The next step is to add a bit of animation for when it shows and hides. To allow for this, we can use Vue's `Transition` component.
+ - We can wrap anything we want to transition within `Transition` component.
+    ```
+    <template>
+    <Transition>
+        <div v-if="show" class="modal-mask">
+        <div class="modal-container">
+            <div>
+            <slot>default body</slot>
+            </div>
+
+            <footer class="modal-footer">
+            <slot name="footer">
+                <button @click="$emit('close')">Close</button>
+            </slot>
+            </footer>
+        </div>
+        </div>
+    </Transition>
+    </template>
+    ```
+- The next step is to instruct it how tom perform a transition. 
+    ```
+    <Transition
+    enter-from-class="opacity-0 scale-125"
+    enter-to-class="opacity-100 scale-100"
+    enter-active-class="transition duration-300"
+    leave-active-class="transition duration-200"
+    leave-from-class="opacity-100 scale-100"
+    leave-to-class="opacity-0 scale-125"
+    >
+    ```
+- Second approach is to pass the name to the transition have `css` classes starting with the same name. 
+```
+<Transition
+   name="modal"
+  >
+  
+</Transition>
+  //css
+.modal-enter-active, .modal-leave-to{
+ transition: opacity 1s;
+}
+.modal-enter-from{
+  opacity: 0;
+}
+.modal-enter-to, .modal-leave-from{
+  opacity: 100;
+}
+```
